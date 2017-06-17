@@ -6,7 +6,11 @@ find_package(catkin REQUIRED
             roscpp
             tf
             nav_msgs
+            std_msgs
+            nautonomous_msgs
         )
+
+
 
 find_package(SDL REQUIRED)
 find_package(SDL_image REQUIRED)

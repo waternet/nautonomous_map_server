@@ -1,4 +1,3 @@
 <launch>
-	<arg name="map_file" default="$(find nautonomous_configuration)/config/map_amsterdam/amsterdam_cropped.yaml"/>
-  	<node name="nautonomous_map_server" pkg="nautonomous_map_server" type="nautonomous_map_server" args="$(arg map_file)" output="screen"/>
+	<node name="nautonomous_map_server" pkg="nautonomous_map_server" type="nautonomous_map_server" output="screen"/>
 </launch>
