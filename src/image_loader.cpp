@@ -42,13 +42,13 @@
 // We use SDL_image to load the image from disk
 #include <SDL/SDL_image.h>
 
-#include "map_server/image_loader.h"
+#include "nautonomous_map_server/image_loader.h"
 #include <tf/tf.h>
 
 // compute linear index for given map coords
 #define MAP_IDX(sx, i, j) ((sx) * (j) + (i))
 
-namespace map_server
+namespace nautonomous_map_server
 {
 
 void

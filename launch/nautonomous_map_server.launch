@@ -1,3 +1,5 @@
 <launch>
+
 	<node name="nautonomous_map_server" pkg="nautonomous_map_server" type="nautonomous_map_server" output="screen"/>
+
 </launch>

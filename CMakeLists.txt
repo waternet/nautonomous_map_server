@@ -7,10 +7,8 @@ find_package(catkin REQUIRED
             tf
             nav_msgs
             std_msgs
-            nautonomous_msgs
+	    nautonomous_map_msgs
         )
-
-
 
 find_package(SDL REQUIRED)
 find_package(SDL_image REQUIRED)
@@ -108,8 +106,3 @@ install(DIRECTORY include/${PROJECT_NAME}/
   FILES_MATCHING PATTERN "*.h"
   PATTERN ".svn" EXCLUDE)
 
-## Install excutable python script
-install(
-    PROGRAMS
-      scripts/crop_map
-    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})

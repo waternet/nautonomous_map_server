@@ -44,12 +44,13 @@
 #include "ros/console.h"
 #include "std_msgs/String.h"
 #include "nautonomous_map_server/image_loader.h"
-#include "nautonomous_msgs/MapLoader.h"
+#include "nautonomous_map_msgs/MapLoader.h"
 #include "nav_msgs/MapMetaData.h"
 #include "yaml-cpp/yaml.h"
 #include "std_msgs/Float32MultiArray.h"
 
 #ifdef HAVE_YAMLCPP_GT_0_5_0
+
 // The >> operator disappeared in yaml-cpp 0.5, so this function is
 // added to provide support for code written under the yaml-cpp 0.3 API.
 template<typename T>
@@ -71,7 +72,7 @@ nav_msgs::MapMetaData meta_data_message_;
 nav_msgs::GetMap::Response map_resp_;
 
 // Load the map using the service request.
-bool load_map(nautonomous_msgs::MapLoader::Request &request, nautonomous_msgs::MapLoader::Response &response){
+bool load_map(nautonomous_map_msgs::MapLoader::Request &request, nautonomous_map_msgs::MapLoader::Response &response){
 
     ROS_INFO("Load_map callback");
 
@@ -175,7 +176,7 @@ bool load_map(nautonomous_msgs::MapLoader::Request &request, nautonomous_msgs::M
     }
 
     ROS_INFO("Loading map from image \"%s\"", image_file_name.c_str());
-    map_server::loadMapFromFile(&map_resp_,image_file_name.c_str(),res,negate,occ_th,free_th, origin, mode);
+    nautonomous_map_server::loadMapFromFile(&map_resp_,image_file_name.c_str(),res,negate,occ_th,free_th, origin, mode);
     map_resp_.map.info.map_load_time = ros::Time::now();
     map_resp_.map.header.frame_id = frame_id;
     map_resp_.map.header.stamp = ros::Time::now();
@@ -208,12 +209,12 @@ int main(int argc, char **argv)
   ros::init(argc, argv, "nautonomous_map_server");
   ros::NodeHandle n;
 
-  map_data = n.advertise<std_msgs::Float32MultiArray>("map_server/map_data", 1, true);      
+  map_data = n.advertise<std_msgs::Float32MultiArray>("/map/server/map_data", 1, true);      
 
-  metadata_pub= n.advertise<nav_msgs::MapMetaData>("map_metadata", 1, true);
-  map_pub = n.advertise<nav_msgs::OccupancyGrid>("map", 1, true);
+  metadata_pub= n.advertise<nav_msgs::MapMetaData>("/map/server/map_metadata", 1, true);
+  map_pub = n.advertise<nav_msgs::OccupancyGrid>("/map/server/map", 1, true);
   
-  ros::ServiceServer service = n.advertiseService("map_server/load_map", load_map);
+  ros::ServiceServer service = n.advertiseService("/map/server/load_map", load_map);
   ROS_INFO("Initialized service");
   
   ros::spin();
