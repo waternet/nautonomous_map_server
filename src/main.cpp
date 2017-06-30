@@ -76,10 +76,10 @@ bool load_map(nautonomous_map_msgs::Load::Request &request, nautonomous_map_msgs
 
     ROS_INFO("Load_map callback");
 
-    std::string image_name = request.image_name;
+    std::string image_name;
     std::string config_name = request.config_name;
-
-    ROS_INFO("Load_map %s %s", image_name.c_str(), config_name.c_str());
+    
+    ROS_INFO("Load_map %s", config_name.c_str());
 
     double res = 0.0;
     double origin[3];
@@ -156,7 +156,7 @@ bool load_map(nautonomous_map_msgs::Load::Request &request, nautonomous_map_msgs
       exit(-1);
     }
     try {
-      //doc["image"] >> mapfname;
+      doc["image"] >> image_name;
       // TODO: make this path-handling more robust
       if(image_name.size() == 0)
       {
@@ -209,12 +209,12 @@ int main(int argc, char **argv)
   ros::init(argc, argv, "nautonomous_map_server");
   ros::NodeHandle n;
 
-  map_data = n.advertise<std_msgs::Float32MultiArray>("/map/server/map_data", 1, true);      
+  map_data = n.advertise<std_msgs::Float32MultiArray>("map_data_topic", 1, true);      
 
-  metadata_pub= n.advertise<nav_msgs::MapMetaData>("/map/server/map_metadata", 1, true);
-  map_pub = n.advertise<nav_msgs::OccupancyGrid>("/map/server/map", 1, true);
+  metadata_pub= n.advertise<nav_msgs::MapMetaData>("map_metadata_topic", 1, true);
+  map_pub = n.advertise<nav_msgs::OccupancyGrid>("map_topic", 1, true);
   
-  ros::ServiceServer service = n.advertiseService("/map/server/load", load_map);
+  ros::ServiceServer service = n.advertiseService("load_service", load_map);
   
   ros::spin();
 
