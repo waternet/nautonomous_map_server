@@ -11,11 +11,13 @@
 	<node name="nautonomous_map_server" pkg="nautonomous_map_server" type="nautonomous_map_server" output="screen">
 		<param name="frame_id" value="map"/>
 
-		<remap from="map_data_topic" to="/map/server/map_data"/>
-		<remap from="map_metadata_topic" to="/map/server/map_metadata"/>
-		<remap from="map_topic" to="/map/server/map"/>
+		<remap from="map_data_topic" to="$(arg map_data_topic)"/>
+		<remap from="map_metadata_topic" to="$(arg map_metadata_topic)"/>
+		<remap from="map_topic" to="$(arg map_topic)"/>
 
-		<remap from="load_service" to="/map/server/load"/>
+		<remap from="load_service" to="$(arg load_service)"/>
 	</node>
+
+	<node pkg="rosbag" type="record" name="rosbag_map_server" args="record -o $(arg rosbag_prefix_url)/map/server $(arg map_topic) $(arg map_metadata_topic) $(arg map_data_topic)" output="screen" if="$(arg rosbag_enabled)"/>
 
 </launch>
