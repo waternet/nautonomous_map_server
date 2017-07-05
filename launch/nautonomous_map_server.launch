@@ -1,3 +1,23 @@
 <launch>
-	<node name="nautonomous_map_server" pkg="nautonomous_map_server" type="nautonomous_map_server" output="screen"/>
+	<arg name="rosbag_enabled" default="false"/>
+	<arg name="rosbag_prefix_url" default="/tmp"/>
+
+	<arg name="map_data_topic" default="map_data_topic"/>
+	<arg name="map_metadata_topic" default="map_metadata_topic"/>
+	<arg name="map_topic" default="map_topic"/>
+
+	<arg name="load_service" default="load_service"/>
+
+	<node name="nautonomous_map_server" pkg="nautonomous_map_server" type="nautonomous_map_server" output="screen">
+		<param name="frame_id" value="map"/>
+
+		<remap from="map_data_topic" to="$(arg map_data_topic)"/>
+		<remap from="map_metadata_topic" to="$(arg map_metadata_topic)"/>
+		<remap from="map_topic" to="$(arg map_topic)"/>
+
+		<remap from="load_service" to="$(arg load_service)"/>
+	</node>
+
+	<node pkg="rosbag" type="record" name="rosbag_map_server" args="record -o $(arg rosbag_prefix_url)/map/server $(arg map_topic) $(arg map_metadata_topic) $(arg map_data_topic)" output="screen" if="$(arg rosbag_enabled)"/>
+
 </launch>
