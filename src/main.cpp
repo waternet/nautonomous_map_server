@@ -209,12 +209,12 @@ int main(int argc, char **argv)
   ros::init(argc, argv, "nautonomous_map_server");
   ros::NodeHandle n;
 
-  map_data = n.advertise<std_msgs::Float32MultiArray>("map_data_topic", 1, true);      
+  map_data = n.advertise<std_msgs::Float32MultiArray>("map_data", 1, true);      
 
-  metadata_pub= n.advertise<nav_msgs::MapMetaData>("map_metadata_topic", 1, true);
-  map_pub = n.advertise<nav_msgs::OccupancyGrid>("map_topic", 1, true);
+  metadata_pub= n.advertise<nav_msgs::MapMetaData>("map_metadata", 1, true);
+  map_pub = n.advertise<nav_msgs::OccupancyGrid>("map", 1, true);
   
-  ros::ServiceServer service = n.advertiseService("load_service", load_map);
+  ros::ServiceServer service = n.advertiseService("load", load_map);
   
   ros::spin();
 
