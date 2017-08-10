@@ -74,12 +74,10 @@ nav_msgs::GetMap::Response map_resp_;
 // Load the map using the service request.
 bool load_map(nautonomous_map_msgs::Load::Request &request, nautonomous_map_msgs::Load::Response &response){
 
-    ROS_INFO("Load_map callback");
-
     std::string image_name;
     std::string config_name = request.config_name;
     
-    ROS_INFO("Load_map %s", config_name.c_str());
+    ROS_INFO("Map Server: Load_map %s", config_name.c_str());
 
     double res = 0.0;
     double origin[3];
@@ -94,7 +92,7 @@ bool load_map(nautonomous_map_msgs::Load::Request &request, nautonomous_map_msgs
 
     std::ifstream fin(config_name.c_str());
     if (fin.fail()) {
-      ROS_ERROR("Map_server could not open %s.", config_name.c_str());
+      ROS_ERROR("Map Server: Could not open %s.", config_name.c_str());
       exit(-1);
     }
 #ifdef HAVE_YAMLCPP_GT_0_5_0
@@ -108,25 +106,25 @@ bool load_map(nautonomous_map_msgs::Load::Request &request, nautonomous_map_msgs
     try {
       doc["resolution"] >> res;
     } catch (YAML::InvalidScalar) {
-      ROS_ERROR("The map does not contain a resolution tag or it is invalid.");
+      ROS_ERROR("Map Server: The map does not contain a resolution tag or it is invalid.");
       exit(-1);
     }
     try {
       doc["negate"] >> negate;
     } catch (YAML::InvalidScalar) {
-      ROS_ERROR("The map does not contain a negate tag or it is invalid.");
+      ROS_ERROR("Map Server: The map does not contain a negate tag or it is invalid.");
       exit(-1);
     }
     try {
       doc["occupied_thresh"] >> occ_th;
     } catch (YAML::InvalidScalar) {
-      ROS_ERROR("The map does not contain an occupied_thresh tag or it is invalid.");
+      ROS_ERROR("Map Server: The map does not contain an occupied_thresh tag or it is invalid.");
       exit(-1);
     }
     try {
       doc["free_thresh"] >> free_th;
     } catch (YAML::InvalidScalar) {
-      ROS_ERROR("The map does not contain a free_thresh tag or it is invalid.");
+      ROS_ERROR("Map Server: The map does not contain a free_thresh tag or it is invalid.");
       exit(-1);
     }
     try {
@@ -140,11 +138,11 @@ bool load_map(nautonomous_map_msgs::Load::Request &request, nautonomous_map_msgs
       else if(modeS=="raw")
         mode = RAW;
       else{
-        ROS_ERROR("Invalid mode tag \"%s\".", modeS.c_str());
+        ROS_ERROR("Map Server: Invalid mode tag \"%s\".", modeS.c_str());
         exit(-1);
       }
     } catch (YAML::Exception) {
-      ROS_DEBUG("The map does not contain a mode tag or it is invalid... assuming Trinary");
+      ROS_DEBUG("Map Server: The map does not contain a mode tag or it is invalid... assuming Trinary");
       mode = TRINARY;
     }
     try {
@@ -152,7 +150,7 @@ bool load_map(nautonomous_map_msgs::Load::Request &request, nautonomous_map_msgs
       doc["origin"][1] >> origin[1];
       doc["origin"][2] >> origin[2];
     } catch (YAML::InvalidScalar) {
-      ROS_ERROR("The map does not contain an origin tag or it is invalid.");
+      ROS_ERROR("Map Server: The map does not contain an origin tag or it is invalid.");
       exit(-1);
     }
     try {
@@ -160,7 +158,7 @@ bool load_map(nautonomous_map_msgs::Load::Request &request, nautonomous_map_msgs
       // TODO: make this path-handling more robust
       if(image_name.size() == 0)
       {
-        ROS_ERROR("The image tag cannot be an empty string.");
+        ROS_ERROR("Map Server: The image tag cannot be an empty string.");
         exit(-1);
       }
       if(image_name[0] != '/')
@@ -171,16 +169,16 @@ bool load_map(nautonomous_map_msgs::Load::Request &request, nautonomous_map_msgs
         free(fname_copy);
       }
     } catch (YAML::InvalidScalar) {
-      ROS_ERROR("The map does not contain an image tag or it is invalid.");
+      ROS_ERROR("Map Server: The map does not contain an image tag or it is invalid.");
       exit(-1);
     }
 
-    ROS_INFO("Loading map from image \"%s\"", image_name.c_str());
+    ROS_INFO("Map Server: Loading map from image \"%s\"", image_name.c_str());
     nautonomous_map_server::loadMapFromFile(&map_resp_,image_name.c_str(),res,negate,occ_th,free_th, origin, mode);
     map_resp_.map.info.map_load_time = ros::Time::now();
     map_resp_.map.header.frame_id = frame_id;
     map_resp_.map.header.stamp = ros::Time::now();
-    ROS_INFO("Read a %d X %d map @ %.3lf m/cell",
+    ROS_INFO("Map Server: Read a %d X %d map @ %.3lf m/cell",
               map_resp_.map.info.width,
               map_resp_.map.info.height,
               map_resp_.map.info.resolution);
@@ -195,7 +193,7 @@ bool load_map(nautonomous_map_msgs::Load::Request &request, nautonomous_map_msgs
 
     // Latched publisher for map data (gps center)
     //map_data.publish(gps_origin);
-    ROS_INFO("New map data published");
+    ROS_INFO("Map Server: New map data published");
 
     response.status = "Ok";
 
