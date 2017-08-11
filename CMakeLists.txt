@@ -56,12 +56,6 @@ target_link_libraries(nautonomous_map_server
     ${catkin_LIBRARIES}
 )
 
-add_executable(map_server-map_saver src/map_saver.cpp)
-set_target_properties(map_server-map_saver PROPERTIES OUTPUT_NAME map_saver)
-target_link_libraries(map_server-map_saver
-    ${catkin_LIBRARIES}
-)
-
 # copy test data to same place as tests are run
 function(copy_test_data)
     cmake_parse_arguments(PROJECT "" "" "FILES" ${ARGN})
@@ -95,7 +89,7 @@ if(CATKIN_ENABLE_TESTING)
 endif()
 
 ## Install executables and/or libraries
-install(TARGETS map_server-map_saver nautonomous_map_server map_server_image_loader
+install(TARGETS nautonomous_map_server map_server_image_loader
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
