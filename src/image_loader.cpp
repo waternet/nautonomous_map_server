@@ -82,8 +82,8 @@ loadMapFromFile(nav_msgs::GetMap::Response* resp,
   resp->map.info.width = img->w;
   resp->map.info.height = img->h;
   resp->map.info.resolution = res;
-  resp->map.info.origin.position.x = *(origin);
-  resp->map.info.origin.position.y = *(origin+1);
+  resp->map.info.origin.position.x = - (img->w * res) / 2.0;
+  resp->map.info.origin.position.y = - (img->h * res) / 2.0;
   resp->map.info.origin.position.z = 0.0;
   tf::Quaternion q;
   q.setRPY(0,0, *(origin+2));

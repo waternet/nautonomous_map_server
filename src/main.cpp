@@ -43,11 +43,14 @@
 #include "ros/ros.h"
 #include "ros/console.h"
 #include "std_msgs/String.h"
+#include "geometry_msgs/Point.h"
 #include "nautonomous_map_server/image_loader.h"
 #include "nautonomous_map_msgs/Load.h"
 #include "nav_msgs/MapMetaData.h"
 #include "yaml-cpp/yaml.h"
 #include "std_msgs/Float32MultiArray.h"
+
+#include <SDL/SDL_image.h>
 
 #ifdef HAVE_YAMLCPP_GT_0_5_0
 
@@ -63,6 +66,7 @@ void operator >> (const YAML::Node& node, T& i)
 //Create publisher and service objects
 ros::Publisher map_pub;
 ros::Publisher metadata_pub;
+ros::Publisher center_pub;
 ros::Publisher map_data;
 ros::ServiceServer service;
 
@@ -174,7 +178,17 @@ bool load_map(nautonomous_map_msgs::Load::Request &request, nautonomous_map_msgs
     }
 
     ROS_INFO("Map Server: Loading map from image \"%s\"", image_name.c_str());
+    
     nautonomous_map_server::loadMapFromFile(&map_resp_,image_name.c_str(),res,negate,occ_th,free_th, origin, mode);
+    int width = map_resp_.map.info.width;
+    int height = map_resp_.map.info.height;
+
+    geometry_msgs::Point point;
+    point.x = origin[0] + (width * res) / 2.0;
+    point.y = origin[1] + (height * res) / 2.0;
+    point.z = 0.0;
+    center_pub.publish(point);
+
     map_resp_.map.info.map_load_time = ros::Time::now();
     map_resp_.map.header.frame_id = frame_id;
     map_resp_.map.header.stamp = ros::Time::now();
@@ -207,12 +221,14 @@ int main(int argc, char **argv)
   ros::init(argc, argv, "nautonomous_map_server");
   ros::NodeHandle n;
 
-  map_data = n.advertise<std_msgs::Float32MultiArray>("map_data", 1, true);      
+  map_data = n.advertise<std_msgs::Float32MultiArray>("map_data_topic", 1, true);      
 
-  metadata_pub= n.advertise<nav_msgs::MapMetaData>("map_metadata", 1, true);
-  map_pub = n.advertise<nav_msgs::OccupancyGrid>("map", 1, true);
+  metadata_pub= n.advertise<nav_msgs::MapMetaData>("map_metadata_topic", 1, true);
+  map_pub = n.advertise<nav_msgs::OccupancyGrid>("map_topic", 1, true);
+
+  center_pub= n.advertise<geometry_msgs::Point>("map_center_topic", 1, true);
   
-  ros::ServiceServer service = n.advertiseService("load", load_map);
+  ros::ServiceServer service = n.advertiseService("load_service", load_map);
   
   ros::spin();
 
