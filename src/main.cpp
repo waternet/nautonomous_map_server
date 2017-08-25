@@ -226,7 +226,7 @@ int main(int argc, char **argv)
   metadata_pub= n.advertise<nav_msgs::MapMetaData>("map_metadata_topic", 1, true);
   map_pub = n.advertise<nav_msgs::OccupancyGrid>("map_topic", 1, true);
 
-  center_pub= n.advertise<geometry_msgs::Point>("map_center_topic", 1, true);
+  center_pub = n.advertise<geometry_msgs::Point>("map_center_topic", 1, true);
   
   ros::ServiceServer service = n.advertiseService("load_service", load_map);
   
